@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCM Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <h1>NCM CHATBOT</h1>
+            <h2>Nehru College of Management</h2>
+        </header>
+
+        <main class="chat-area" id="chatbox">
+            <div class="message bot">
+                <div class="bubble">
+                    Welcome! I am the NCM Chatbot, your AI marks assistant. How can I help you today?
+                </div>
+            </div>
+        </main>
+
+        <footer class="chat-input-area">
+            <form id="chat-form" class="input-form">
+                <input type="text" id="user-input" placeholder="Ask about marks, grades, or predictions..." autocomplete="off" required>
+                <button type="submit" id="send-btn">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+                    </svg>
+                </button>
+            </form>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
