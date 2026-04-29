@@ -15,13 +15,7 @@ try:
 except ImportError:
     GEMINI_AVAILABLE = False
 
-try:
-    from sklearn.tree import DecisionTreeClassifier
-
-    ML_AVAILABLE = True
-except ImportError:
-    ML_AVAILABLE = False
-
+ML_AVAILABLE = False
 
 SUBJECTS = ["Math", "Science", "English", "History"]
 DATASET_URLS = [
@@ -47,8 +41,6 @@ class NCM_Bot:
             self.df = None
 
         self.ml_model = None
-        if self.df is not None and ML_AVAILABLE:
-            self.train_model()
 
     def train_model(self):
         """Train a simple decision tree on the student dataset."""
@@ -115,9 +107,7 @@ class NCM_Bot:
             return
 
         print("\nHello! I am your NCM AI assistant.")
-        if ML_AVAILABLE:
-            print("I can also predict grades using a machine learning model trained on the marks dataset.")
-            print(" - Ask for a prediction, for example: 'predict marks 85 90 80 75'")
+
         print(" - Ask questions such as 'What is Alice\\'s grade?' or 'show only C grade'.")
         print(" - Add 'subject only' if you want subject marks without overall totals.")
         print("Type 'exit' to quit.\n")
@@ -148,22 +138,6 @@ class NCM_Bot:
 
         if df is None:
             return "I cannot access the marks dataset right now. Please try again later."
-
-        if "predict" in query_lower and self.ml_model:
-            nums = re.findall(r"\d+", query_lower)
-            if len(nums) >= 4:
-                marks = [int(n) for n in nums[:4]]
-                pred_grade = self.ml_model.predict([marks])[0]
-                return f"My trained AI model predicts that marks {marks} would result in grade {pred_grade}."
-            return (
-                "To use the AI predictor, please provide four numbers for Math, Science, "
-                "English, and History, for example: 'predict 80 90 85 70'."
-            )
-        if "predict" in query_lower and not ML_AVAILABLE:
-            return (
-                "Machine learning support is not installed. Run "
-                "`pip install scikit-learn numpy` to enable grade prediction."
-            )
 
         raw_query = query.lower()
         query_words = set(self._tokenize(query_lower))
@@ -377,7 +351,7 @@ class NCM_Bot:
         if is_greeting:
             return (
                 "Hello! I am the NCM Chatbot for Nehru College of Management. "
-                "I can help you check marks, grades, and simple predictions."
+                "I can help you check marks, grades, and student details."
             )
 
         words = query_lower.strip(" ?!.").split()
@@ -386,7 +360,7 @@ class NCM_Bot:
 
         return (
             "I could not understand that request. Try asking for a student's grade, "
-            "the highest mark in a subject, or a prediction using four subject marks."
+            "the highest mark in a subject, or a student's failure status."
         )
 
 def main():
