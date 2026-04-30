@@ -59,17 +59,23 @@ class NCM_Bot:
         names_in_df = self.df["Name"].tolist()
         query_words = set(self._tokenize(query_lower))
         
-        matches = []
+        matches_with_score = []
 
         for name in names_in_df:
             name_lower = name.lower()
-            name_parts = name_lower.split()
-            if name_lower in query_lower or any(part in query_words for part in name_parts):
-                if name not in matches:
-                    matches.append(name)
+            if name_lower in query_lower:
+                matches_with_score.append((name, 100))
+                continue
+                
+            name_parts = set(name_lower.split())
+            intersection = name_parts.intersection(query_words)
+            if intersection:
+                matches_with_score.append((name, len(intersection)))
 
-        if matches:
-            return matches
+        if matches_with_score:
+            max_score = max(score for name, score in matches_with_score)
+            best_matches = [name for name, score in matches_with_score if score == max_score]
+            return list(dict.fromkeys(best_matches))
 
         all_parts = []
         for name in names_in_df:
@@ -84,10 +90,16 @@ class NCM_Bot:
             best_match = close_matches[0]
             for name in names_in_df:
                 if best_match in name.lower().split():
-                    if name not in fuzzy_matches:
-                        fuzzy_matches.append(name)
+                    fuzzy_matches.append(name)
+                    
+        if fuzzy_matches:
+            from collections import Counter
+            counts = Counter(fuzzy_matches)
+            max_count = max(counts.values())
+            best_fuzzy = [name for name, count in counts.items() if count == max_count]
+            return best_fuzzy
 
-        return fuzzy_matches
+        return []
 
     def _format_subject_scores(self, person_data):
         return ", ".join(f"{subject}: {person_data[subject]}" for subject in SUBJECTS)
@@ -108,19 +120,29 @@ class NCM_Bot:
 
         print("\nHello! I am your NCM AI assistant.")
 
-        print(" - Ask questions such as 'What is Alice\\'s grade?' or 'show only C grade'.")
+        print(" - Ask questions such as 'What is Alice\'s grade?' or 'show only C grade'.")
         print(" - Add 'subject only' if you want subject marks without overall totals.")
         print("Type 'exit' to quit.\n")
+        
+        import os
+        history_file = "temp_chat_history.txt"
+        with open(history_file, "w", encoding="utf-8") as f:
+            f.write("--- NCM Chatbot Session History ---\n\n")
 
         while True:
             user_input = input("You: ").strip()
             if user_input.lower() in ["exit", "quit"]:
+                print(f"[INFO] Chat session ended. History saved temporarily to {history_file}")
                 break
             if not user_input:
                 continue
 
             response = self.process_query(user_input)
             print(f"Bot: {response}\n")
+            
+            with open(history_file, "a", encoding="utf-8") as f:
+                f.write(f"You: {user_input}\n")
+                f.write(f"Bot: {response}\n\n")
 
     def process_query(self, query):
         if GEMINI_AVAILABLE:
