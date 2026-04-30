@@ -6,6 +6,7 @@
     <title>NCM Chatbot</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <div class="chat-container">
@@ -17,15 +18,15 @@
         <main class="chat-area" id="chatbox">
             <div class="message bot">
                 <div class="bubble">
-                    Welcome! I am the NCM Chatbot, your AI marks assistant. How can I help you today?
+                    👋 Welcome to NCM Chatbot!<br><br>I can help you with:<br>📊 Student rankings &amp; summaries<br>👤 Individual student details<br>📈 Performance analytics<br>📋 Arrears information<br><br>Try: "summary", "top 5 ug cgpa", or a name!
                 </div>
             </div>
         </main>
 
         <footer class="chat-input-area">
             <form id="chat-form" class="input-form">
-                <input type="text" id="user-input" placeholder="Ask about marks, grades, or student details..." autocomplete="off" required>
-                <button type="submit" id="send-btn">
+                <input type="text" id="user-input" placeholder="✨ Ask about students, rankings, summaries..." autocomplete="off" required>
+                <button type="submit" id="send-btn" title="Send message">
                     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
                         <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
                     </svg>

@@ -21,9 +21,15 @@ def chat():
 
     user_message = data["message"]
     try:
-        # Process the message synchronously through the chatbot engine.
         bot_response = ncm_bot.process_query(user_message)
-        return jsonify({"response": bot_response})
+        if isinstance(bot_response, dict):
+            return jsonify(
+                {
+                    "response": str(bot_response.get("response", "")),
+                    "charts": bot_response.get("charts", []),
+                }
+            )
+        return jsonify({"response": str(bot_response), "charts": []})
     except Exception as e:
         print(f"[ERROR] Processing message: {e}")
         return jsonify({"response": "Something went wrong while processing your message."}), 500
