@@ -1,0 +1,16 @@
+# Ignore Python environment folders
+.venv/
+venv/
+
+# Byte-compiled Python files
+__pycache__/
+*.py[cod]
+*.class
+
+# Logs and database files
+*.log
+*.sqlite3
+
+# Temporary files
+*.env
+*.DS_Store
