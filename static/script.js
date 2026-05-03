@@ -18,28 +18,28 @@ document.addEventListener("DOMContentLoaded", () => {
             charts.forEach((chartData, index) => {
                 const canvasContainer = document.createElement("div");
                 canvasContainer.style.marginTop = "25px";
-                canvasContainer.style.background = "linear-gradient(135deg, rgba(15, 50, 80, 0.6) 0%, rgba(20, 70, 100, 0.6) 100%)";
+                canvasContainer.style.background = "linear-gradient(135deg, rgba(114, 9, 183, 0.3) 0%, rgba(58, 134, 255, 0.3) 100%)";
                 canvasContainer.style.padding = "24px";
                 canvasContainer.style.borderRadius = "16px";
                 canvasContainer.style.width = "100%";
                 canvasContainer.style.maxWidth = "100%";
-                canvasContainer.style.border = "2px solid rgba(0, 150, 220, 0.5)";
+                canvasContainer.style.border = "2px solid rgba(199, 125, 255, 0.5)";
                 canvasContainer.style.backdropFilter = "blur(12px)";
                 canvasContainer.style.animation = `slideInUp 0.6s ease-out ${index * 0.12}s forwards`;
                 canvasContainer.style.opacity = "0";
-                canvasContainer.style.boxShadow = "0 8px 40px rgba(0, 150, 220, 0.2), inset 0 1px 3px rgba(100, 200, 255, 0.2)";
+                canvasContainer.style.boxShadow = "0 8px 40px rgba(114, 9, 183, 0.2), inset 0 1px 3px rgba(199, 125, 255, 0.2)";
                 
                 const titleDiv = document.createElement("div");
                 titleDiv.style.fontSize = "14px";
                 titleDiv.style.fontWeight = "800";
-                titleDiv.style.color = "#00d4ff";
+                titleDiv.style.color = "#00ffaa";
+                titleDiv.style.marginBottff006e";
                 titleDiv.style.marginBottom = "18px";
                 titleDiv.style.textTransform = "uppercase";
                 titleDiv.style.letterSpacing = "1.5px";
-                titleDiv.style.borderBottom = "2px solid rgba(0, 200, 255, 0.4)";
+                titleDiv.style.borderBottom = "2px solid rgba(199, 125, 255, 0.4)";
                 titleDiv.style.paddingBottom = "10px";
-                titleDiv.style.textShadow = "0 0 10px rgba(0, 200, 255, 0.3)";
-                titleDiv.innerText = chartData.title;
+                titleDiv.style.textShadow = "0 0 10px rgba(199, 125, 255
                 canvasContainer.appendChild(titleDiv);
                 
                 const canvasWrapper = document.createElement("div");
@@ -52,13 +52,23 @@ document.addEventListener("DOMContentLoaded", () => {
                 canvasContainer.appendChild(canvasWrapper);
                 bubbleDiv.appendChild(canvasContainer);
 
-                const gradientColors = [
-                    { bg: 'rgba(0, 150, 220, 0.7)', border: 'rgb(0, 200, 255)' },
-                    { bg: 'rgba(0, 180, 240, 0.7)', border: 'rgb(50, 220, 255)' },
-                    { bg: 'rgba(0, 120, 200, 0.7)', border: 'rgb(0, 180, 220)' }
+                // Unique color palette for each student
+                const colorPalette = [
+                    '#7209b7', '#3a86ff', '#ff006e', '#8338ec', '#fb5607',
+                    '#ffbe0b', '#26de81', '#e83e8c', '#5f27cd', '#00d2d3',
+                    '#ff9ff3', '#54a0ff', '#48dbfb', '#1dd1a1', '#ee5a6f',
+                    '#f368e0', '#626ee0', '#2ed573', '#a29bfe', '#fd79a8'
                 ];
-                
-                const gradientColor = gradientColors[index % 3];
+
+                // Create background and border colors for each student
+                const bgColors = chartData.labels.map((label, idx) => {
+                    const color = colorPalette[idx % colorPalette.length];
+                    return color + '99'; // Add transparency
+                });
+
+                const borderColors = chartData.labels.map((label, idx) => {
+                    return colorPalette[idx % colorPalette.length];
+                });
 
                 new Chart(canvas, {
                     type: 'bar',
@@ -67,11 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         datasets: [{
                             label: chartData.title,
                             data: chartData.data,
-                            backgroundColor: gradientColor.bg,
-                            borderColor: gradientColor.border,
+                            backgroundColor: bgColors,
+                            borderColor: borderColors,
                             borderWidth: 3,
                             borderRadius: 8,
-                            hoverBackgroundColor: gradientColor.border,
+                            hoverBackgroundColor: borderColors,
                             hoverBorderWidth: 4,
                         }]
                     },
@@ -88,21 +98,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#00d4ff',
+                                    color: '#c77dff',
                                     font: { size: 13, weight: '700' },
                                     padding: 18,
                                     usePointStyle: true,
                                     pointStyle: 'circle',
-                                    textShadow: '0 0 8px rgba(0, 200, 255, 0.3)'
+                                    textShadow: '0 0 8px rgba(199, 125, 255, 0.3)'
                                 }
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(10, 30, 50, 0.98)',
+                                backgroundColor: 'rgba(20, 10, 40, 0.98)',
                                 padding: 16,
                                 cornerRadius: 10,
                                 titleFont: { size: 14, weight: 'bold' },
                                 bodyFont: { size: 13 },
-                                borderColor: gradientColor.border,
+                                borderColor: '#c77dff',
                                 borderWidth: 2,
                                 callbacks: {
                                     label: function(context) {
@@ -115,12 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(0, 150, 220, 0.2)',
+                                    color: 'rgba(199, 125, 255, 0.2)',
                                     drawBorder: false,
                                     lineWidth: 1.5
                                 },
                                 ticks: {
-                                    color: 'rgba(0, 200, 255, 0.8)',
+                                    color: 'rgba(199, 125, 255, 0.8)',
                                     font: { size: 12, weight: '600' }
                                 }
                             },
@@ -130,7 +140,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     drawBorder: false
                                 },
                                 ticks: {
-                                    color: 'rgba(0, 200, 255, 0.8)',
+                                    color: 'rgba(199, 125, 255, 0.8)',
                                     font: { size: 12, weight: '600' }
                                 }
                             }

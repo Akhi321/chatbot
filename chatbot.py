@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import difflib
 import os
 import re
@@ -131,14 +132,31 @@ class NCM_Bot:
         return str(value)
 
     def _format_student_details(self, row):
-        lines = [f"Name: {row.get('Name', 'N/A')}"]
+        lines = [f"👤 Name: {row.get('Name', 'N/A')}"]
         for label, column in DISPLAY_FIELDS:
             if column not in self.df.columns:
                 continue
             value = row.get(column, "")
             if pd.isna(value) or value == "":
                 continue
-            lines.append(f"{label}: {self._format_value(value)}")
+            # Add emoji based on field type
+            emoji_map = {
+                "Roll Number": "🆔",
+                "Department": "🏫",
+                "Course": "📚",
+                "Batch": "📅",
+                "Gender": "👥",
+                "Email": "✉️",
+                "Contact": "📱",
+                "UG CGPA": "📈",
+                "PG CGPA": "📊",
+                "10th Percentage": "🎓",
+                "12th Percentage": "🎓",
+                "Standing Arrears": "⚠️",
+                "History of Arrears": "📋",
+            }
+            emoji = emoji_map.get(label, "•")
+            lines.append(f"{emoji} {label}: {self._format_value(value)}")
         return "\n".join(lines)
 
     def _extract_limit(self, query_lower):
@@ -281,27 +299,28 @@ class NCM_Bot:
 
     def _help_response(self):
         return (
-            "Try asking things like:\n"
-            "- show details for a student name or roll number\n"
-            "- top 5 ug cgpa\n"
-            "- lowest 3 standing arrears\n"
-            "- students in a department\n"
-            "- summary\n"
-            "- list students with arrears"
+            "❓ Try asking things like:\n"
+            "📋 Show details for a student name or roll number\n"
+            "🏆 Top 5 ug cgpa\n"
+            "📉 Lowest 3 standing arrears\n"
+            "🏫 Students in a department\n"
+            "📊 Summary\n"
+            "⚠️ List students with arrears"
         )
 
     def _summary_response(self):
-        lines = [f"Total students: {len(self.df)}"]
+        lines = [f"📊 Student Summary Report\n" + "=" * 40]
+        lines.append(f"👥 Total students: {len(self.df)}")
 
         if "department" in self.df.columns:
-            lines.append(f"Departments: {self.df['department'].nunique()}")
+            lines.append(f"🏫 Departments: {self.df['department'].nunique()}")
         if "course" in self.df.columns:
-            lines.append(f"Courses: {self.df['course'].nunique()}")
+            lines.append(f"📚 Courses: {self.df['course'].nunique()}")
         if "UG CGPA" in self.df.columns:
-            lines.append(f"Average UG CGPA: {self.df['UG CGPA'].dropna().mean():.2f}")
+            lines.append(f"📈 Average UG CGPA: {self.df['UG CGPA'].dropna().mean():.2f}")
         if "Standing Arrears" in self.df.columns:
             arrears_count = int((self.df["Standing Arrears"].fillna(0) > 0).sum())
-            lines.append(f"Students with standing arrears: {arrears_count}")
+            lines.append(f"⚠️ Students with standing arrears: {arrears_count}")
 
         return "\n".join(lines)
 
@@ -315,11 +334,13 @@ class NCM_Bot:
             if filtered.empty:
                 continue
 
-            lines = [f"Students in {label} '{value}' ({len(filtered)} found):"]
+            emoji_map = {"department": "🏫", "course": "📚", "batch": "📅"}
+            emoji = emoji_map.get(label, "•")
+            lines = [f"{emoji} Students in {label} '{value}' ({len(filtered)} found):"]
             for _, row in filtered.head(10).iterrows():
-                lines.append(f"- {row.get('Name', 'N/A')}")
+                lines.append(f"  👤 {row.get('Name', 'N/A')}")
             if len(filtered) > 10:
-                lines.append(f"...and {len(filtered) - 10} more.")
+                lines.append(f"  ...and {len(filtered) - 10} more.")
             return "\n".join(lines)
 
         return None
@@ -335,13 +356,13 @@ class NCM_Bot:
 
         filtered = self.df[self.df[metric].fillna(0) > 0].sort_values(metric, ascending=False)
         if filtered.empty:
-            return {"response": f"No students have {self._metric_label(metric).lower()}."}
+            return {"response": f"✅ No students have {self._metric_label(metric).lower()}."}
 
         limit = min(self._extract_limit(query_lower), len(filtered), 10)
         result = filtered.head(limit)
-        lines = [f"Students with {self._metric_label(metric).lower()}:"]
+        lines = [f"⚠️ Students with {self._metric_label(metric).lower()}:"]
         for _, row in result.iterrows():
-            lines.append(f"- {row.get('Name', 'N/A')}: {self._format_value(row.get(metric))}")
+            lines.append(f"  👤 {row.get('Name', 'N/A')}: {self._format_value(row.get(metric))}")
 
         return {
             "response": "\n".join(lines),
@@ -360,7 +381,7 @@ class NCM_Bot:
         if not metric or metric not in self.df.columns:
             return {
                 "response": (
-                    "I could not find a numeric metric to rank. "
+                    "❓ I could not find a numeric metric to rank. "
                     "Try UG CGPA, 10th percentage, 12th percentage, or arrears."
                 )
             }
@@ -371,22 +392,24 @@ class NCM_Bot:
         ranking = self.df.dropna(subset=[metric])
 
         if ranking.empty:
-            return {"response": f"I do not have enough data to rank students by {metric_label}."}
+            return {"response": f"❌ I do not have enough data to rank students by {metric_label}."}
 
         ranking = ranking.nlargest(limit, metric) if is_top else ranking.nsmallest(limit, metric)
 
+        emoji = "🏆" if is_top else "📉"
         title = (
-            f"Top {limit} students by {metric_label}:"
+            f"{emoji} Top {limit} students by {metric_label}:"
             if is_top
-            else f"Lowest {limit} students by {metric_label}:"
+            else f"{emoji} Lowest {limit} students by {metric_label}:"
         )
 
         lines = [title]
-        for _, row in ranking.iterrows():
+        for idx, (_, row) in enumerate(ranking.iterrows(), 1):
+            rank_emoji = ["🥇", "🥈", "🥉"][idx - 1] if idx <= 3 else "🎯"
             if wants_details:
-                lines.append(f"- {self._format_student_details(row)}")
+                lines.append(f"{rank_emoji} {self._format_student_details(row)}")
             else:
-                lines.append(f"- {row.get('Name', 'N/A')}: {self._format_value(row.get(metric))}")
+                lines.append(f"{rank_emoji} {row.get('Name', 'N/A')}: {self._format_value(row.get(metric))}")
 
         return {
             "response": "\n".join(lines),
@@ -418,7 +441,7 @@ class NCM_Bot:
 
     def process_query(self, query):
         if self.df is None:
-            return "I cannot access the student dataset right now. Please try again later."
+            return "❌ I cannot access the student dataset right now. Please try again later."
 
         query_lower = query.lower().strip()
         clean_q = query_lower.strip(" ?!.,;\n")
@@ -429,8 +452,8 @@ class NCM_Bot:
 
         if is_greeting:
             return (
-                "Hello! I am the NCM Chatbot for Nehru College of Management. "
-                "I can help with student details, rankings, summaries, and arrears."
+                "👋 Hello! I am the NCM Chatbot for Nehru College of Management. "
+                "I can help with 📋 student details, 🏆 rankings, 📊 summaries, and ⚠️ arrears."
             )
 
         if clean_words.intersection({"help", "commands", "examples"}):
@@ -458,7 +481,7 @@ class NCM_Bot:
             return self._format_student_details(student_row)
 
         return (
-            "I could not find a matching student or command. "
+            "❓ I could not find a matching student or command. "
             "Try 'help', a student name, 'summary', or 'top 5 ug cgpa'."
         )
 
