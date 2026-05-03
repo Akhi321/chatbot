@@ -17,33 +17,40 @@ document.addEventListener("DOMContentLoaded", () => {
         if (charts && charts.length > 0) {
             charts.forEach((chartData, index) => {
                 const canvasContainer = document.createElement("div");
-                canvasContainer.style.marginTop = "15px";
-                canvasContainer.style.background = "linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.08) 100%)";
-                canvasContainer.style.padding = "16px";
-                canvasContainer.style.borderRadius = "12px";
+                canvasContainer.style.marginTop = "20px";
+                canvasContainer.style.background = "linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(40, 40, 40, 0.8) 100%)";
+                canvasContainer.style.padding = "20px";
+                canvasContainer.style.borderRadius = "14px";
                 canvasContainer.style.width = "100%";
-                canvasContainer.style.maxWidth = "450px";
-                canvasContainer.style.border = "1px solid rgba(102, 126, 234, 0.3)";
+                canvasContainer.style.maxWidth = "100%";
+                canvasContainer.style.border = "1px solid rgba(80, 80, 80, 0.5)";
                 canvasContainer.style.backdropFilter = "blur(10px)";
+                canvasContainer.style.animation = `slideInUp 0.5s ease-out ${index * 0.1}s forwards`;
+                canvasContainer.style.opacity = "0";
                 
                 const titleDiv = document.createElement("div");
-                titleDiv.style.fontSize = "12px";
-                titleDiv.style.fontWeight = "600";
-                titleDiv.style.color = "#a0aec0";
-                titleDiv.style.marginBottom = "12px";
+                titleDiv.style.fontSize = "13px";
+                titleDiv.style.fontWeight = "700";
+                titleDiv.style.color = "#e8e8e8";
+                titleDiv.style.marginBottom = "16px";
                 titleDiv.style.textTransform = "uppercase";
-                titleDiv.style.letterSpacing = "0.5px";
+                titleDiv.style.letterSpacing = "1px";
+                titleDiv.style.borderBottom = "2px solid rgba(100, 100, 100, 0.6)";
+                titleDiv.style.paddingBottom = "8px";
                 titleDiv.innerText = chartData.title;
                 canvasContainer.appendChild(titleDiv);
                 
                 const canvas = document.createElement("canvas");
-                canvas.style.maxHeight = "300px";
+                canvas.style.maxHeight = "450px";
+                canvas.style.minHeight = "350px";
                 canvasContainer.appendChild(canvas);
                 bubbleDiv.appendChild(canvasContainer);
 
-                const gradientColor = index % 2 === 0 
-                    ? { bg: 'rgba(102, 126, 234, 0.7)', border: 'rgb(102, 126, 234)' }
-                    : { bg: 'rgba(118, 75, 162, 0.7)', border: 'rgb(118, 75, 162)' };
+                const gradientColor = index % 3 === 0 
+                    ? { bg: 'rgba(100, 100, 100, 0.8)', border: 'rgb(150, 150, 150)' }
+                    : index % 3 === 1
+                    ? { bg: 'rgba(80, 80, 80, 0.8)', border: 'rgb(130, 130, 130)' }
+                    : { bg: 'rgba(110, 110, 110, 0.8)', border: 'rgb(160, 160, 160)' };
 
                 new Chart(canvas, {
                     type: 'bar',
@@ -54,8 +61,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: chartData.data,
                             backgroundColor: gradientColor.bg,
                             borderColor: gradientColor.border,
-                            borderWidth: 2,
-                            borderRadius: 6,
+                            borderWidth: 2.5,
+                            borderRadius: 8,
                             hoverBackgroundColor: gradientColor.border,
                             hoverBorderWidth: 3,
                         }]
@@ -63,22 +70,34 @@ document.addEventListener("DOMContentLoaded", () => {
                     options: {
                         indexAxis: chartData.labels.length > 5 ? 'y' : 'x',
                         responsive: true,
-                        maintainAspectRatio: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeInOutQuart'
+                        },
                         plugins: {
                             legend: {
-                                display: false
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    color: '#c0c0c0',
+                                    font: { size: 12, weight: '600' },
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                                padding: 12,
+                                backgroundColor: 'rgba(20, 20, 20, 0.95)',
+                                padding: 14,
                                 cornerRadius: 8,
                                 titleFont: { size: 13, weight: 'bold' },
                                 bodyFont: { size: 12 },
                                 borderColor: gradientColor.border,
-                                borderWidth: 1,
+                                borderWidth: 2,
                                 callbacks: {
                                     label: function(context) {
-                                        return ' ' + context.parsed.y.toFixed(2);
+                                        return context.dataset.label + ': ' + context.parsed.y.toFixed(2);
                                     }
                                 }
                             }
@@ -87,11 +106,12 @@ document.addEventListener("DOMContentLoaded", () => {
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(102, 126, 234, 0.1)',
-                                    drawBorder: false
+                                    color: 'rgba(80, 80, 80, 0.3)',
+                                    drawBorder: false,
+                                    lineWidth: 1
                                 },
                                 ticks: {
-                                    color: 'rgba(224, 231, 255, 0.6)',
+                                    color: 'rgba(180, 180, 180, 0.8)',
                                     font: { size: 11, weight: '500' }
                                 }
                             },
@@ -101,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     drawBorder: false
                                 },
                                 ticks: {
-                                    color: 'rgba(224, 231, 255, 0.6)',
+                                    color: 'rgba(180, 180, 180, 0.8)',
                                     font: { size: 11, weight: '500' }
                                 }
                             }
