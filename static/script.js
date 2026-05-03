@@ -17,40 +17,48 @@ document.addEventListener("DOMContentLoaded", () => {
         if (charts && charts.length > 0) {
             charts.forEach((chartData, index) => {
                 const canvasContainer = document.createElement("div");
-                canvasContainer.style.marginTop = "20px";
-                canvasContainer.style.background = "linear-gradient(135deg, rgba(30, 30, 30, 0.8) 0%, rgba(40, 40, 40, 0.8) 100%)";
-                canvasContainer.style.padding = "20px";
-                canvasContainer.style.borderRadius = "14px";
+                canvasContainer.style.marginTop = "25px";
+                canvasContainer.style.background = "linear-gradient(135deg, rgba(15, 50, 80, 0.6) 0%, rgba(20, 70, 100, 0.6) 100%)";
+                canvasContainer.style.padding = "24px";
+                canvasContainer.style.borderRadius = "16px";
                 canvasContainer.style.width = "100%";
                 canvasContainer.style.maxWidth = "100%";
-                canvasContainer.style.border = "1px solid rgba(80, 80, 80, 0.5)";
-                canvasContainer.style.backdropFilter = "blur(10px)";
-                canvasContainer.style.animation = `slideInUp 0.5s ease-out ${index * 0.1}s forwards`;
+                canvasContainer.style.border = "2px solid rgba(0, 150, 220, 0.5)";
+                canvasContainer.style.backdropFilter = "blur(12px)";
+                canvasContainer.style.animation = `slideInUp 0.6s ease-out ${index * 0.12}s forwards`;
                 canvasContainer.style.opacity = "0";
+                canvasContainer.style.boxShadow = "0 8px 40px rgba(0, 150, 220, 0.2), inset 0 1px 3px rgba(100, 200, 255, 0.2)";
                 
                 const titleDiv = document.createElement("div");
-                titleDiv.style.fontSize = "13px";
-                titleDiv.style.fontWeight = "700";
-                titleDiv.style.color = "#e8e8e8";
-                titleDiv.style.marginBottom = "16px";
+                titleDiv.style.fontSize = "14px";
+                titleDiv.style.fontWeight = "800";
+                titleDiv.style.color = "#00d4ff";
+                titleDiv.style.marginBottom = "18px";
                 titleDiv.style.textTransform = "uppercase";
-                titleDiv.style.letterSpacing = "1px";
-                titleDiv.style.borderBottom = "2px solid rgba(100, 100, 100, 0.6)";
-                titleDiv.style.paddingBottom = "8px";
+                titleDiv.style.letterSpacing = "1.5px";
+                titleDiv.style.borderBottom = "2px solid rgba(0, 200, 255, 0.4)";
+                titleDiv.style.paddingBottom = "10px";
+                titleDiv.style.textShadow = "0 0 10px rgba(0, 200, 255, 0.3)";
                 titleDiv.innerText = chartData.title;
                 canvasContainer.appendChild(titleDiv);
                 
+                const canvasWrapper = document.createElement("div");
+                canvasWrapper.style.position = "relative";
+                canvasWrapper.style.height = "450px";
+                canvasWrapper.style.width = "100%";
+                
                 const canvas = document.createElement("canvas");
-                canvas.style.maxHeight = "450px";
-                canvas.style.minHeight = "350px";
-                canvasContainer.appendChild(canvas);
+                canvasWrapper.appendChild(canvas);
+                canvasContainer.appendChild(canvasWrapper);
                 bubbleDiv.appendChild(canvasContainer);
 
-                const gradientColor = index % 3 === 0 
-                    ? { bg: 'rgba(100, 100, 100, 0.8)', border: 'rgb(150, 150, 150)' }
-                    : index % 3 === 1
-                    ? { bg: 'rgba(80, 80, 80, 0.8)', border: 'rgb(130, 130, 130)' }
-                    : { bg: 'rgba(110, 110, 110, 0.8)', border: 'rgb(160, 160, 160)' };
+                const gradientColors = [
+                    { bg: 'rgba(0, 150, 220, 0.7)', border: 'rgb(0, 200, 255)' },
+                    { bg: 'rgba(0, 180, 240, 0.7)', border: 'rgb(50, 220, 255)' },
+                    { bg: 'rgba(0, 120, 200, 0.7)', border: 'rgb(0, 180, 220)' }
+                ];
+                
+                const gradientColor = gradientColors[index % 3];
 
                 new Chart(canvas, {
                     type: 'bar',
@@ -61,10 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             data: chartData.data,
                             backgroundColor: gradientColor.bg,
                             borderColor: gradientColor.border,
-                            borderWidth: 2.5,
+                            borderWidth: 3,
                             borderRadius: 8,
                             hoverBackgroundColor: gradientColor.border,
-                            hoverBorderWidth: 3,
+                            hoverBorderWidth: 4,
                         }]
                     },
                     options: {
@@ -72,7 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         responsive: true,
                         maintainAspectRatio: false,
                         animation: {
-                            duration: 1000,
+                            duration: 1200,
                             easing: 'easeInOutQuart'
                         },
                         plugins: {
@@ -80,19 +88,20 @@ document.addEventListener("DOMContentLoaded", () => {
                                 display: true,
                                 position: 'top',
                                 labels: {
-                                    color: '#c0c0c0',
-                                    font: { size: 12, weight: '600' },
-                                    padding: 15,
+                                    color: '#00d4ff',
+                                    font: { size: 13, weight: '700' },
+                                    padding: 18,
                                     usePointStyle: true,
-                                    pointStyle: 'circle'
+                                    pointStyle: 'circle',
+                                    textShadow: '0 0 8px rgba(0, 200, 255, 0.3)'
                                 }
                             },
                             tooltip: {
-                                backgroundColor: 'rgba(20, 20, 20, 0.95)',
-                                padding: 14,
-                                cornerRadius: 8,
-                                titleFont: { size: 13, weight: 'bold' },
-                                bodyFont: { size: 12 },
+                                backgroundColor: 'rgba(10, 30, 50, 0.98)',
+                                padding: 16,
+                                cornerRadius: 10,
+                                titleFont: { size: 14, weight: 'bold' },
+                                bodyFont: { size: 13 },
                                 borderColor: gradientColor.border,
                                 borderWidth: 2,
                                 callbacks: {
@@ -106,13 +115,13 @@ document.addEventListener("DOMContentLoaded", () => {
                             y: {
                                 beginAtZero: true,
                                 grid: {
-                                    color: 'rgba(80, 80, 80, 0.3)',
+                                    color: 'rgba(0, 150, 220, 0.2)',
                                     drawBorder: false,
-                                    lineWidth: 1
+                                    lineWidth: 1.5
                                 },
                                 ticks: {
-                                    color: 'rgba(180, 180, 180, 0.8)',
-                                    font: { size: 11, weight: '500' }
+                                    color: 'rgba(0, 200, 255, 0.8)',
+                                    font: { size: 12, weight: '600' }
                                 }
                             },
                             x: {
@@ -121,8 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
                                     drawBorder: false
                                 },
                                 ticks: {
-                                    color: 'rgba(180, 180, 180, 0.8)',
-                                    font: { size: 11, weight: '500' }
+                                    color: 'rgba(0, 200, 255, 0.8)',
+                                    font: { size: 12, weight: '600' }
                                 }
                             }
                         }
